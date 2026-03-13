@@ -43,8 +43,6 @@ function getGeneralTasks() {
   }
 }
 
-
-// CREATE GENERAL TASK
 function createGeneralTask(title, description, status, priority, assignee, due_date) {
   try {
     const spreadsheet = getMainDatabase();
