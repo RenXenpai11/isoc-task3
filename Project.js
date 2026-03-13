@@ -1,3 +1,4 @@
+//function to get project summary
 function getProjectSummary() {
   try {
     console.log('Starting getProjectSummary...');
@@ -16,7 +17,7 @@ function getProjectSummary() {
       console.log(JSON.stringify(errorResult, null, 2));
       return errorResult;
     }
-    console.log('Projects sheet found');
+    console.log('Projects sheet found'); 
     
     // Get all project data (assuming status is in a specific column, e.g., column C)
     const lastRow = sheet.getLastRow();
