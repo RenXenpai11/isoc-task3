@@ -95,7 +95,7 @@ function getProjectList(sheetName = 'Projects', rangeAddress = 'G:K') {
 }
 
 
-// Retrieves task details from the Project Task sheet
+// Retrieves task details from the Project Task sheettt
 function getTaskDetails(sheetName = 'Project Task', rowNumber = 2) {
   try {
     console.log('Fetching task from ' + sheetName + ' row ' + rowNumber);
