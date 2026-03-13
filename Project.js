@@ -56,12 +56,13 @@ function getProjectSummary() {
 function getProjectList() {
     try {
         const spreadsheet = getMainDatabase();
-        const sheet = spreadsheet.getSheetByName('Project');
+        // Try both singular and plural sheet names to avoid name mismatches
+        const sheet = spreadsheet.getSheetByName('Project') || spreadsheet.getSheetByName('Projects');
 
         if (!sheet) {
             return {
                 success: false,
-                error: "Sheet 'Project' not found"
+                error: "Sheet 'Project' (or 'Projects') not found"
             };
         }
 
