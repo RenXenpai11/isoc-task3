@@ -52,7 +52,7 @@ function getCellValue(sheetName, cellRange) {
   }
 }
 
-// Test function to get project summary
+//Function to get project summary
 function getProjects() {
   const result = getProjectSummary(); //calls the getProjectSummary function to retrieve project summary data
   console.log('Project Summary:');
