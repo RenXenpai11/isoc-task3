@@ -75,18 +75,8 @@ function doGet(e) { //handles GET requests to the web app and returns project su
   }
 }
 
-function initializeDatabase() {
-  try {
-    setMainDatabase('1bB7JezupjhmQRj0MoMg0Agtpxu3yluhX13KJPISqMPU'); //calling the setMainDatabase function to initialize the database with the specified spreadsheet ID
-    console.log('✓ Database initialized successfully!');
-    console.log('✓ Spreadsheet ID: 1bB7JezupjhmQRj0MoMg0Agtpxu3yluhX13KJPISqMPU');
-  } catch (error) {
-    console.log('✗ Database initialization failed: ' + error.message);
-  }
-}
-
 // Function to get project list
-function displayProjectList(sheetName = 'Projects', rangeAddress = null) {
+function displayProjectList(sheetName = 'Projects', rangeAddress = null) { 
   try {
     console.log('Fetching project list from sheet: ' + sheetName);
     const result = getProjectList(sheetName, rangeAddress);
