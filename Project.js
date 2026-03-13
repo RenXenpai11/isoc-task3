@@ -1,6 +1,6 @@
 /**
  * Retrieves project summary statistics.
- * @returns {object} JSON object with project counts by status.
+ * @returns {object} // JSON object with project counts by status.
  */
 
 function getProjectSummary() {
@@ -96,9 +96,8 @@ function getProjectSummary() {
   }
 }
 
-/**
- * Test function to verify getProjectSummary output.
- */
+
+//Test function to verify getProjectSummary output.
 function testGetProjectSummary() {
   const result = getProjectSummary();
   console.log(JSON.stringify(result, null, 2));

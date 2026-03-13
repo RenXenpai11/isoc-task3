@@ -1,3 +1,1 @@
-function myFunction() {
-  
-}
+// Functions moved to Helper Functions.js
