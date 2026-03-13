@@ -52,3 +52,36 @@ function getCellValue(sheetName, cellRange) {
   }
 }
 
+
+// Test function to get project summary
+function getProjects() {
+  const result = getProjectSummary();
+  Logger.log('Project Summary:');
+  Logger.log(JSON.stringify(result, null, 2));
+  return result;
+}
+
+function doGet(e) {
+  try {
+    const result = getProjectSummary();
+    return ContentService.createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    const errorResponse = {
+      success: false,
+      error: error.message
+    };
+    return ContentService.createTextOutput(JSON.stringify(errorResponse))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function initializeDatabase() {
+  try {
+    setMainDatabase('1bB7JezupjhmQRj0MoMg0Agtpxu3yluhX13KJPISqMPU');
+    Logger.log('✓ Database initialized successfully!');
+    Logger.log('✓ Spreadsheet ID: 1bB7JezupjhmQRj0MoMg0Agtpxu3yluhX13KJPISqMPU');
+  } catch (error) {
+    Logger.log('✗ Database initialization failed: ' + error.message);
+  }
+}
