@@ -96,8 +96,9 @@ function getProjectSummary() {
   }
 }
 
-
-//Test function to verify getProjectSummary output.
+/**
+ * Test function to verify getProjectSummary output.
+ */
 function testGetProjectSummary() {
   const result = getProjectSummary();
   console.log(JSON.stringify(result, null, 2));
