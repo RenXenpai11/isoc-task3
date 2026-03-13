@@ -52,12 +52,11 @@ function getCellValue(sheetName, cellRange) {
   }
 }
 
-
 // Test function to get project summary
 function getProjects() {
   const result = getProjectSummary(); //calls the getProjectSummary function to retrieve project summary data
-  Logger.log('Project Summary:');
-  Logger.log(JSON.stringify(result, null, 2));
+  console.log('Project Summary:');
+  console.log(JSON.stringify(result, null, 2));
   return result;
 }
 
@@ -79,9 +78,28 @@ function doGet(e) { //handles GET requests to the web app and returns project su
 function initializeDatabase() {
   try {
     setMainDatabase('1bB7JezupjhmQRj0MoMg0Agtpxu3yluhX13KJPISqMPU'); //calling the setMainDatabase function to initialize the database with the specified spreadsheet ID
-    Logger.log('✓ Database initialized successfully!');
-    Logger.log('✓ Spreadsheet ID: 1bB7JezupjhmQRj0MoMg0Agtpxu3yluhX13KJPISqMPU');
+    console.log('✓ Database initialized successfully!');
+    console.log('✓ Spreadsheet ID: 1bB7JezupjhmQRj0MoMg0Agtpxu3yluhX13KJPISqMPU');
   } catch (error) {
-    Logger.log('✗ Database initialization failed: ' + error.message);
+    console.log('✗ Database initialization failed: ' + error.message);
+  }
+}
+
+// Function to get project list
+function displayProjectList(sheetName = 'Projects', rangeAddress = null) {
+  try {
+    console.log('Fetching project list from sheet: ' + sheetName);
+    const result = getProjectList(sheetName, rangeAddress);
+    console.log('Project List:');
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  } catch (error) {
+    const errorResult = {
+      success: false,
+      error: error.message
+    };
+    console.log('Error fetching project list:');
+    console.log(JSON.stringify(errorResult, null, 2));
+    return errorResult;
   }
 }
