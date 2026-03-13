@@ -100,7 +100,7 @@ function testGetProjectSummary() {
 }
 
 // Function to get project list with details
-function getProjectList(sheetName = 'Projects', rangeAddress = 'G2:K2') {
+function getProjectList(sheetName = 'Projects', rangeAddress = 'G:K') {
   try {
     console.log('Starting getProjectList from sheet: ' + sheetName);
     
@@ -168,6 +168,58 @@ function getProjectList(sheetName = 'Projects', rangeAddress = 'G2:K2') {
     };
     
     console.log('Project list completed:');
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+    
+  } catch (error) {
+    const errorResult = {
+      success: false,
+      error: error.message
+    };
+    console.log('Error occurred:');
+    console.log(JSON.stringify(errorResult, null, 2));
+    return errorResult;
+  }
+}
+
+
+// Retrieves task details from the Project Task sheet  
+function getTaskDetails(sheetName = 'Project Task', rowNumber = 2) {
+  try {
+    console.log('Starting getTaskDetails from sheet: ' + sheetName + ', row: ' + rowNumber);
+    
+    const spreadsheet = getMainDatabase();
+    const sheet = spreadsheet.getSheetByName(sheetName);
+    
+    if (!sheet) {
+      return { success: false, error: "Sheet '" + sheetName + "' not found" };
+    }
+    
+    // Get task data from specified row
+    const taskData = sheet.getRange(rowNumber, 1, 1, 10).getValues()[0];
+    
+    if (!taskData || taskData[0] === '') {
+      return { success: false, error: "No task found at row " + rowNumber };
+    }
+    
+    const result = {
+      success: true,
+      data: {
+        task_name: String(taskData[0]).trim() || 'N/A',
+        priority: String(taskData[1]).trim() || 'N/A',
+        assigned: String(taskData[2]).trim() || 'N/A',
+        date: {
+          start_date: String(taskData[3]).trim() || 'N/A',
+          end_date: String(taskData[4]).trim() || 'N/A'
+        },
+        description: String(taskData[5]).trim() || 'N/A',
+        status: String(taskData[6]).trim() || 'N/A',
+        progress: parseInt(taskData[7]) || 0,
+        notes: String(taskData[8]).trim() || 'N/A'
+      }
+    };
+    
+    console.log('Task details completed:');
     console.log(JSON.stringify(result, null, 2));
     return result;
     
