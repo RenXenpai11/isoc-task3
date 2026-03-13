@@ -56,35 +56,26 @@ function getProjectSummary() {
 function getProjectList() {
     try {
         const spreadsheet = getMainDatabase();
-        const sheet = spreadsheet.getSheetByName('Projects');
+        const sheet = spreadsheet.getSheetByName('Project');
 
         if (!sheet) {
             return {
                 success: false,
-                error: "Sheet 'Projects' not found"
+                error: "Sheet 'Project' not found"
             };
         }
 
-        const data = sheet.getDataRange().getValues();
-        if (!data || data.length < 2) {
-            return {
-                success: true,
-                data: []
-            };
-        }
-
-        const headers = data[0];
-        const rows = data.slice(1).map(row => {
-            const record = {};
-            headers.forEach((header, idx) => {
-                record[header] = row[idx];
-            });
-            return record;
-        });
+        const values = sheet.getRange('G2:K2').getValues()[0];
+        const progressNumber = Number(values[3]);
 
         return {
             success: true,
-            data: rows
+            data: {
+                project_name: values[0],
+                status: values[1],
+                project_leader: values[2],
+                progress: Number.isNaN(progressNumber) ? values[3] : progressNumber
+            }
         };
     } catch (error) {
         return {
