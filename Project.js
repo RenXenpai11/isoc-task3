@@ -1,8 +1,4 @@
-/**
- * Retrieves project summary statistics.
- * @returns {object} // JSON object with project counts by status.
- */
-
+//function to get project summary
 function getProjectSummary() {
   try {
     console.log('Starting getProjectSummary...');
@@ -21,7 +17,7 @@ function getProjectSummary() {
       console.log(JSON.stringify(errorResult, null, 2));
       return errorResult;
     }
-    console.log('Projects sheet found');
+    console.log('Projects sheet found'); 
     
     // Get all project data (assuming status is in a specific column, e.g., column C)
     const lastRow = sheet.getLastRow();
@@ -43,7 +39,7 @@ function getProjectSummary() {
     }
     
     // Get status column data (starting from row 2 to skip header)
-    const statusRange = sheet.getRange(2, 3, lastRow - 1, 1); // Column C for status
+    const statusRange = sheet.getRange(2, 9, lastRow - 1, 1); // Column I for status
     const statusValues = statusRange.getValues();
     console.log('Status values retrieved: ' + statusValues.length + ' rows');
     
@@ -103,4 +99,96 @@ function testGetProjectSummary() {
   const result = getProjectSummary();
   console.log(JSON.stringify(result, null, 2));
   return result;
+}
+
+// Function to get project list with details
+function getProjectList(sheetName = 'Projects', rangeAddress = null) {
+  try {
+    console.log('Starting getProjectList from sheet: ' + sheetName);
+    
+    // Get the main database spreadsheet
+    const spreadsheet = getMainDatabase();
+    console.log('Database connected successfully');
+    
+    // Get the specified sheet
+    const sheet = spreadsheet.getSheetByName(sheetName); 
+    if (!sheet) {
+      return {
+        success: false,
+        error: "Sheet '" + sheetName + "' not found"
+      };
+    }
+    console.log('Sheet "' + sheetName + '" found');
+    
+    // Get project data
+    let projectData;
+    
+    if (rangeAddress) {
+      // Use custom range if provided
+      console.log('Using custom range: ' + rangeAddress);
+      projectData = sheet.getRange(rangeAddress).getValues();
+    } else {
+      // Get all data from A2 to E (columns) and all rows
+      const lastRow = sheet.getLastRow();
+      
+      if (lastRow <= 1) {
+        return {
+          success: true,
+          data: []
+        };
+      }
+      
+      // Get range G2:K{lastRow}
+      projectData = sheet.getRange(2, 7, lastRow - 1, 5).getValues();
+    }
+    
+    console.log('Project data retrieved: ' + projectData.length + ' rows');
+    
+    // Process data into array of project objects
+    const projects = [];
+    
+    try { 
+      projectData.forEach(function(row, index) {
+        try {
+          const projectName = String(row[0]).trim();
+          const status = String(row[2]).trim();
+          const projectLeader = String(row[3]).trim();
+          const progress = parseInt(row[4]) || 0;
+          
+          // Only add non-empty projects
+          if (projectName !== '' && projectName !== 'undefined') {
+            projects.push({
+              project_name: projectName,
+              status: status || 'N/A',
+              project_leader: projectLeader || 'N/A',
+              progress: progress
+            });
+          }
+        } catch (rowError) {
+          console.log('Error processing row ' + (index + 2) + ': ' + rowError.message);
+        }
+      });
+    } catch (forEachError) {
+      console.log('Error in forEach loop: ' + forEachError.message);
+    }
+    
+    // Build the result
+    const result = {
+      success: true,
+      data: projects
+    };
+    
+    console.log('Project list completed:');
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+    
+  } catch (error) {
+    const errorResult = {
+      success: false,
+      error: error.message
+    };
+    console.log('Error occurred:');
+    console.log(JSON.stringify(errorResult, null, 2));
+    return errorResult;
+  }
 }
