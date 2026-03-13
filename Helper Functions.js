@@ -1,5 +1,5 @@
 
-function getCellValue(sheetName, cellRange) {
+function getCellValue(sheetName, cellRange) { 
   try {
     // Get the main database spreadsheet
     const spreadsheet = getMainDatabase();
@@ -52,63 +52,3 @@ function getCellValue(sheetName, cellRange) {
   }
 }
 
-// Test function to get project summary
-function getProjects() {
-  const result = getProjectSummary(); //calls the getProjectSummary function to retrieve project summary data
-  console.log('Project Summary:');
-  console.log(JSON.stringify(result, null, 2));
-  return result;
-}
-
-function doGet(e) { //handles GET requests to the web app and returns project summary data in JSON format
-  try {
-    const result = getProjectSummary();
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    const errorResponse = {
-      success: false,
-      error: error.message
-    };
-    return ContentService.createTextOutput(JSON.stringify(errorResponse))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// Function to get project list
-function displayProjectList(sheetName = 'Projects', rangeAddress = 'G:K') { 
-  try {
-    console.log('Fetching project list from sheet: ' + sheetName);
-    const result = getProjectList(sheetName, rangeAddress);
-    console.log('Project List:');
-    console.log(JSON.stringify(result, null, 2));
-    return result;
-  } catch (error) {
-    const errorResult = {
-      success: false,
-      error: error.message
-    };
-    console.log('Error fetching project list:');
-    console.log(JSON.stringify(errorResult, null, 2));
-    return errorResult;
-  }
-}
-
-// Function to get task details - calls getTaskDetails from Project.js
-function displayTaskDetails(sheetName = 'Project Task', rowNumber = 2) {
-  try {
-    console.log('Fetching task details from sheet: ' + sheetName + ', row: ' + rowNumber);
-    const result = getTaskDetails(sheetName, rowNumber);
-    console.log('Task Details:');
-    console.log(JSON.stringify(result, null, 2));
-    return result;
-  } catch (error) {
-    const errorResult = {
-      success: false,
-      error: error.message
-    };
-    console.log('Error fetching task details:');
-    console.log(JSON.stringify(errorResult, null, 2));
-    return errorResult;
-  }
-}
