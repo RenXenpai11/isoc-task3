@@ -1,4 +1,4 @@
-function getProjectSummary() {
+function getProjectSummary() { // Retrieves project summary data from the Projects sheet
   try {
     console.log('Starting getProjectSummary...');
     const spreadsheet = getMainDatabase();
@@ -18,7 +18,7 @@ function getProjectSummary() {
           total_projects: 0,
           ontrack_projects: 0,
           atrisk_projects: 0,
-          delayed_projects: 0
+          delayed_projects: 0 
         }
       };
     }
@@ -59,7 +59,7 @@ function getProjectSummary() {
 }
 
 // Function to get project list with details
-function getProjectList(sheetName = 'Projects', rangeAddress = 'G:K') {
+function getProjectList(sheetName = 'Projects', rangeAddress = 'G:K') { 
   try {
     console.log('Fetching projects from ' + sheetName);
     const spreadsheet = getMainDatabase();
@@ -114,7 +114,7 @@ function getTaskDetails(sheetName = 'Project Task', rowNumber = 2) {
       return { success: false, error: "No task found at row " + rowNumber };
     }
     
-    const result = {
+    const result = { 
       success: true,
       data: {
         task_name: String(taskData[0]).trim() || 'N/A',
