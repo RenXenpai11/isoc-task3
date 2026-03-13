@@ -1,17 +1,21 @@
 function getProjectSummary() {
 	try {
-		const result = getCellValue('Projects', 'G2:K2');
-		if (!result.success) {
-			return result;
+		const db = getMainDatabase();
+		const sheet = db.getSheetByName('Projects');
+		if (!sheet) {
+			return {
+				success: false,
+				error: "Projects sheet not found"
+			};
 		}
 
-		const values = result.values || [[result.value]];
-		const row = values[0] || [];
+		const values = sheet.getRange('G2:K2').getValues();
+		const row = (values && values[0]) ? values[0] : [];
 
 		if (row.length < 4) {
 			return {
 				success: false,
-				error: "Projects!G2:K2 does not contain the expected summary data"
+				error: "Projects summary range does not contain the expected data"
 			};
 		}
 
