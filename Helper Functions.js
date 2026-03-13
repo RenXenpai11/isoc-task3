@@ -76,7 +76,7 @@ function doGet(e) { //handles GET requests to the web app and returns project su
 }
 
 // Function to get project list
-function displayProjectList(sheetName = 'Projects', rangeAddress = 'G2:K2') { 
+function displayProjectList(sheetName = 'Projects', rangeAddress = 'G:K') { 
   try {
     console.log('Fetching project list from sheet: ' + sheetName);
     const result = getProjectList(sheetName, rangeAddress);
@@ -89,6 +89,25 @@ function displayProjectList(sheetName = 'Projects', rangeAddress = 'G2:K2') {
       error: error.message
     };
     console.log('Error fetching project list:');
+    console.log(JSON.stringify(errorResult, null, 2));
+    return errorResult;
+  }
+}
+
+// Function to get task details - calls getTaskDetails from Project.js
+function displayTaskDetails(sheetName = 'Project Task', rowNumber = 2) {
+  try {
+    console.log('Fetching task details from sheet: ' + sheetName + ', row: ' + rowNumber);
+    const result = getTaskDetails(sheetName, rowNumber);
+    console.log('Task Details:');
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  } catch (error) {
+    const errorResult = {
+      success: false,
+      error: error.message
+    };
+    console.log('Error fetching task details:');
     console.log(JSON.stringify(errorResult, null, 2));
     return errorResult;
   }
