@@ -1,8 +1,3 @@
-/**
- * Retrieves project summary statistics.
- * @returns {object} // JSON object with project counts by status.
- */
-
 function getProjectSummary() {
   try {
     console.log('Starting getProjectSummary...');
@@ -104,17 +99,7 @@ function testGetProjectSummary() {
   return result;
 }
 
-/**
- * Retrieves a list of all projects with their details
- * @param {string} sheetName - Name of the sheet (default: 'Projects')
- * @param {string} rangeAddress - Specific range (default: all rows)
- * @returns {object} JSON object with array of projects
- 
- * getProjectList() - Returns all projects
- * getProjectList('Projects', 'A2:E6') - Returns projects in specific range
- */
-
-// Function to get list of projects with details
+// Function to get project list with details
 function getProjectList(sheetName = 'Projects', rangeAddress = null) {
   try {
     console.log('Starting getProjectList from sheet: ' + sheetName);
