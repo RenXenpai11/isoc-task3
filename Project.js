@@ -114,17 +114,11 @@ function getProjectList() {
 	}
 }
 
-function doGet() {
-	const payload = getProjectSummary(); 
-	return ContentService
-		.createTextOutput(JSON.stringify(payload))
-		.setMimeType(ContentService.MimeType.JSON);
-}
-
-function testProjectSummary() {
-	const payload = getProjectSummary();
+function testProjectList() {
+	const payload = getProjectList();
 	Logger.log(JSON.stringify(payload, null, 2));
 	return payload;
 }
+
 
 
