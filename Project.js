@@ -100,7 +100,7 @@ function testGetProjectSummary() {
 }
 
 // Function to get project list with details
-function getProjectList(sheetName = 'Projects', rangeAddress = null) {
+function getProjectList(sheetName = 'Projects', rangeAddress = 'G2:K2') {
   try {
     console.log('Starting getProjectList from sheet: ' + sheetName);
     
@@ -121,23 +121,14 @@ function getProjectList(sheetName = 'Projects', rangeAddress = null) {
     // Get project data
     let projectData;
     
-    if (rangeAddress) {
-      // Use custom range if provided
+    if (rangeAddress && rangeAddress !== 'G2:K2') {
+      // Use custom range if provided (different from default)
       console.log('Using custom range: ' + rangeAddress);
       projectData = sheet.getRange(rangeAddress).getValues();
     } else {
-      // Get all data from A2 to E (columns) and all rows
-      const lastRow = sheet.getLastRow();
-      
-      if (lastRow <= 1) {
-        return {
-          success: true,
-          data: []
-        };
-      }
-      
-      // Get range G2:K{lastRow}
-      projectData = sheet.getRange(2, 7, lastRow - 1, 5).getValues();
+      // Use default range G2:K2 or custom range
+      console.log('Using range: ' + rangeAddress);
+      projectData = sheet.getRange(rangeAddress).getValues();
     }
     
     console.log('Project data retrieved: ' + projectData.length + ' rows');

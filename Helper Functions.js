@@ -76,7 +76,7 @@ function doGet(e) { //handles GET requests to the web app and returns project su
 }
 
 // Function to get project list
-function displayProjectList(sheetName = 'Projects', rangeAddress = null) { 
+function displayProjectList(sheetName = 'Projects', rangeAddress = 'G2:K2') { 
   try {
     console.log('Fetching project list from sheet: ' + sheetName);
     const result = getProjectList(sheetName, rangeAddress);
