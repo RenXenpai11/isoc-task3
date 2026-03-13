@@ -17,39 +17,42 @@ function getProjectSummary() {
 		let onTrack = 0;
 		let atRisk = 0;
 		let delayed = 0;
+		.setMimeType(ContentService.MimeType.JSON);
+}
 
-		for (let i = 1; i < data.length; i++) {
-			const row = data[i];
-			const statusRaw = (row[statusCol] + '').trim().toLowerCase();
-			if (!statusRaw) {
-				continue;
-			}
-			total++;
-			if (statusRaw === 'on track') {
-				onTrack++;
-			} else if (statusRaw === 'at risk') {
-				atRisk++;
-			} else if (statusRaw === 'delayed') {
-				delayed++;
-			}
+function testGetProjectSummary() {
+	const summary = getProjectSummary();
+	console.log(summary);
+	return summary;
+function getProjectList() {
+	try {
+		const spreadsheet = getMainDatabase();
+		const sheet = spreadsheet.getSheetByName('Project');
+
+		if (!sheet) {
+			return {
+				success: false,
+				error: "Sheet 'Project' not found"
+			};
 		}
+
+		const values = sheet.getRange('G2:K2').getValues()[0];
+		const progressNumber = Number(values[3]);
 
 		return {
 			success: true,
 			data: {
-				total_projects: total,
-				ontrack_projects: onTrack,
-				atrisk_projects: atRisk,
-				delayed_projects: delayed
+				project_name: values[0],
+				status: values[1],
+				project_leader: values[2],
+				progress: Number.isNaN(progressNumber) ? values[3] : progressNumber
 			}
 		};
 	} catch (error) {
-		const errorResult = {
+		return {
 			success: false,
 			error: error.message
 		};
-		console.log(errorResult);
-		return errorResult;
 	}
 }
 
@@ -58,3 +61,11 @@ function testGetProjectSummary() {
 	console.log(summary);
 	return summary;
 }
+
+function testGetProjectList() {
+	const payload = getProjectList();
+	console.log(payload);
+	return payload;
+}
+
+
