@@ -81,3 +81,50 @@ function testProjectSummary() {
 	Logger.log(JSON.stringify(payload, null, 2));
 	return payload;
 }
+
+function getProjectList() {
+	try {
+		const spreadsheet = getMainDatabase();
+		const sheet = spreadsheet.getSheetByName('Project');
+
+		if (!sheet) {
+			return {
+				sucess: false,
+				error: "Sheet 'Project' not found"
+			};
+		}
+
+		const values = sheet.getRange('G2:K2').getValues()[0];
+		const progressNumber = Number(values[3]);
+
+		return {
+			sucess: true,
+			data: {
+				project_name: values[0],
+				status: values[1],
+				project_leader: values[2],
+				progress: Number.isNaN(progressNumber) ? values[3] : progressNumber
+			}
+		};
+	} catch (error) {
+		return {
+			sucess: false,
+			error: error.message
+		};
+	}
+}
+
+function doGet() {
+	const payload = getProjectSummary(); 
+	return ContentService
+		.createTextOutput(JSON.stringify(payload))
+		.setMimeType(ContentService.MimeType.JSON);
+}
+
+function testProjectSummary() {
+	const payload = getProjectSummary();
+	Logger.log(JSON.stringify(payload, null, 2));
+	return payload;
+}
+
+
