@@ -1,5 +1,5 @@
 
-function getCellValue(sheetName, cellRange) { 
+function getCellValue(sheetName, cellRange) {
   try {
     // Get the main database spreadsheet
     const spreadsheet = getMainDatabase();
@@ -51,28 +51,3 @@ function getCellValue(sheetName, cellRange) {
     return errorResult;
   }
 }
-
-function getProjectSummaryPayload() {
-  return {
-    success: true,
-    data: {
-      total_projects: 1,
-      ontrack_projects: 1,
-      atrisk_projects: 0,
-      delayed_projects: 0
-    }
-  };
-}
-
-function doGet() {
-  const payload = getProjectSummaryPayload();
-  return ContentService.createTextOutput(JSON.stringify(payload))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function testProjectSummaryPayload() {
-  const payload = getProjectSummaryPayload();
-  Logger.log(JSON.stringify(payload, null, 2));
-  return payload;
-}
-

@@ -1,83 +1,60 @@
 function getProjectSummary() {
 	try {
-		const spreadsheet = getMainDatabase();
-		const sheet = spreadsheet.getSheetByName('Projects');
-
+		const db = getMainDatabase();
+		const sheet = db.getSheetByName('Projects');
 		if (!sheet) {
-			return {
-				success: false,
-				error: "Sheet 'Projects' not found"
-			};
+			return { success: false, error: "Projects sheet not found" };
 		}
 
-		const rows = sheet.getDataRange().getValues();
-		const summary = {
-			total_projects: 0,
-			ontrack_projects: 0,
-			atrisk_projects: 0,
-			delayed_projects: 0
-		};
-
-		if (rows.length <= 1) {
-			return {
-				success: true,
-				data: summary
-			};
+		const data = sheet.getDataRange().getValues();
+		if (!data || data.length < 2) {
+			return { success: false, error: "Projects sheet has no data rows" };
 		}
 
-		const headers = rows[0].map(header => String(header).trim().toLowerCase());
-		const statusIndex = headers.findIndex(header =>
-			header === 'status' ||
-			header === 'project status' ||
-			header === 'project_status' ||
-			header === 'health' ||
-			header === 'progress'
-		);
+		const statusCol = 2; // column C (0-based index)
 
-		if (statusIndex === -1) {
-			return {
-				success: false,
-				error: "Status column not found in 'Projects' sheet"
-			};
+		let total = 0;
+		let onTrack = 0;
+		let atRisk = 0;
+		let delayed = 0;
+
+		for (let i = 1; i < data.length; i++) {
+			const row = data[i];
+			const statusRaw = (row[statusCol] + '').trim().toLowerCase();
+			if (!statusRaw) {
+				continue;
+			}
+			total++;
+			if (statusRaw === 'on track') {
+				onTrack++;
+			} else if (statusRaw === 'at risk') {
+				atRisk++;
+			} else if (statusRaw === 'delayed') {
+				delayed++;
+			}
 		}
-
-		rows.slice(1).forEach(row => {
-			const hasData = row.some(cell => cell !== '' && cell !== null);
-			if (!hasData) return;
-
-			summary.total_projects += 1;
-
-			const normalizedStatus = String(row[statusIndex] || '')
-				.trim()
-				.toLowerCase()
-				.replace(/[\s_-]+/g, '');
-
-			if (normalizedStatus === 'ontrack') summary.ontrack_projects += 1;
-			if (normalizedStatus === 'atrisk') summary.atrisk_projects += 1;
-			if (normalizedStatus === 'delayed') summary.delayed_projects += 1;
-		});
 
 		return {
 			success: true,
-			data: summary
+			data: {
+				total_projects: total,
+				ontrack_projects: onTrack,
+				atrisk_projects: atRisk,
+				delayed_projects: delayed
+			}
 		};
 	} catch (error) {
-		return {
+		const errorResult = {
 			success: false,
 			error: error.message
 		};
+		console.log(errorResult);
+		return errorResult;
 	}
 }
 
-function doGet() {
-	const payload = getProjectSummary(); 
-	return ContentService
-		.createTextOutput(JSON.stringify(payload))
-		.setMimeType(ContentService.MimeType.JSON);
-}
-
-function testProjectSummary() {
-	const payload = getProjectSummary();
-	Logger.log(JSON.stringify(payload, null, 2));
-	return payload;
+function testGetProjectSummary() {
+	const summary = getProjectSummary();
+	console.log(summary);
+	return summary;
 }
