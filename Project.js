@@ -1,29 +1,18 @@
 function getProjectSummary() {
   try {
     console.log('Starting getProjectSummary...');
-    
-    // Get the main database spreadsheet
     const spreadsheet = getMainDatabase();
-    console.log('Database connected successfully');
-    
-    // Get the Projects sheet
     const sheet = spreadsheet.getSheetByName('Projects');
+    
     if (!sheet) {
-      const errorResult = {
-        success: false,
-        error: "Sheet 'Projects' not found"
-      };
-      console.log(JSON.stringify(errorResult, null, 2));
-      return errorResult;
+      console.log("Sheet 'Projects' not found");
+      return { success: false, error: "Sheet 'Projects' not found" };
     }
-    console.log('Projects sheet found');
     
-    // Get all project data (assuming status is in a specific column, e.g., column C)
     const lastRow = sheet.getLastRow();
-    console.log('Total rows in sheet: ' + lastRow);
-    
     if (lastRow <= 1) {
-      const emptyResult = {
+      console.log('No projects found');
+      return {
         success: true,
         data: {
           total_projects: 0,
@@ -32,28 +21,15 @@ function getProjectSummary() {
           delayed_projects: 0
         }
       };
-      console.log('No projects found');
-      console.log(JSON.stringify(emptyResult, null, 2));
-      return emptyResult;
     }
     
-    // Get status column data (starting from row 2 to skip header)
-    const statusRange = sheet.getRange(2, 9, lastRow - 1, 1); // Column I for status
-    const statusValues = statusRange.getValues();
-    console.log('Status values retrieved: ' + statusValues.length + ' rows');
+    const statusValues = sheet.getRange(2, 9, lastRow - 1, 1).getValues();
+    let totalProjects = 0, ontrackProjects = 0, atriskProjects = 0, delayedProjects = 0;
     
-    // Initialize counters
-    let totalProjects = 0;
-    let ontrackProjects = 0;
-    let atriskProjects = 0;
-    let delayedProjects = 0;
-    
-    // Count projects by status
     statusValues.forEach(function(row) {
       const status = String(row[0]).toLowerCase().trim();
-      if (status !== '' && status !== 'undefined' && status !== 'null') {
+      if (status && status !== 'undefined' && status !== 'null') {
         totalProjects++;
-        
         if (status === 'on track' || status === 'ontrack') {
           ontrackProjects++;
         } else if (status === 'at risk' || status === 'atrisk') {
@@ -64,7 +40,6 @@ function getProjectSummary() {
       }
     });
     
-    // Build the result
     const result = {
       success: true,
       data: {
@@ -74,111 +49,92 @@ function getProjectSummary() {
         delayed_projects: delayedProjects
       }
     };
-    
-    // Log and return the summary
-    console.log('Project summary completed:');
     console.log(JSON.stringify(result, null, 2));
     return result;
     
   } catch (error) {
-    const errorResult = {
-      success: false,
-      error: error.message
-    };
-    console.log('Error occurred:');
-    console.log(JSON.stringify(errorResult, null, 2));
-    return errorResult;
+    console.log('Error: ' + error.message);
+    return { success: false, error: error.message };
   }
 }
 
-/**
- * Test function to verify getProjectSummary output.
- */
-function testGetProjectSummary() {
-  const result = getProjectSummary();
-  console.log(JSON.stringify(result, null, 2));
-  return result;
-}
-
 // Function to get project list with details
-function getProjectList(sheetName = 'Projects', rangeAddress = 'G2:K2') {
+function getProjectList(sheetName = 'Projects', rangeAddress = 'G:K') {
   try {
-    console.log('Starting getProjectList from sheet: ' + sheetName);
-    
-    // Get the main database spreadsheet
+    console.log('Fetching projects from ' + sheetName);
     const spreadsheet = getMainDatabase();
-    console.log('Database connected successfully');
+    const sheet = spreadsheet.getSheetByName(sheetName);
     
-    // Get the specified sheet
-    const sheet = spreadsheet.getSheetByName(sheetName); 
     if (!sheet) {
-      return {
-        success: false,
-        error: "Sheet '" + sheetName + "' not found"
-      };
-    }
-    console.log('Sheet "' + sheetName + '" found');
-    
-    // Get project data
-    let projectData;
-    
-    if (rangeAddress && rangeAddress !== 'G2:K2') {
-      // Use custom range if provided (different from default)
-      console.log('Using custom range: ' + rangeAddress);
-      projectData = sheet.getRange(rangeAddress).getValues();
-    } else {
-      // Use default range G2:K2 or custom range
-      console.log('Using range: ' + rangeAddress);
-      projectData = sheet.getRange(rangeAddress).getValues();
+      console.log("Sheet '" + sheetName + "' not found");
+      return { success: false, error: "Sheet '" + sheetName + "' not found" };
     }
     
-    console.log('Project data retrieved: ' + projectData.length + ' rows');
-    
-    // Process data into array of project objects
+    const projectData = sheet.getRange(rangeAddress).getValues();
     const projects = [];
     
-    try { 
-      projectData.forEach(function(row, index) {
-        try {
-          const projectName = String(row[0]).trim();
-          const status = String(row[2]).trim();
-          const projectLeader = String(row[3]).trim();
-          const progress = parseInt(row[4]) || 0;
-          
-          // Only add non-empty projects
-          if (projectName !== '' && projectName !== 'undefined') {
-            projects.push({
-              project_name: projectName,
-              status: status || 'N/A',
-              project_leader: projectLeader || 'N/A',
-              progress: progress
-            });
-          }
-        } catch (rowError) {
-          console.log('Error processing row ' + (index + 2) + ': ' + rowError.message);
-        }
-      });
-    } catch (forEachError) {
-      console.log('Error in forEach loop: ' + forEachError.message);
+    projectData.forEach(function(row) {
+      const projectName = String(row[0]).trim();
+      if (projectName && projectName !== 'undefined') {
+        projects.push({
+          project_name: projectName,
+          status: String(row[2]).trim() || 'N/A',
+          project_leader: String(row[3]).trim() || 'N/A',
+          progress: parseInt(row[4]) || 0
+        });
+      }
+    });
+    
+    console.log(JSON.stringify({ success: true, data: projects }, null, 2));
+    return { success: true, data: projects };
+    
+  } catch (error) {
+    console.log('Error: ' + error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+
+// Retrieves task details from the Project Task sheettt
+function getTaskDetails(sheetName = 'Project Task', rowNumber = 2) {
+  try {
+    console.log('Fetching task from ' + sheetName + ' row ' + rowNumber);
+    const spreadsheet = getMainDatabase();
+    const sheet = spreadsheet.getSheetByName(sheetName);
+    
+    if (!sheet) {
+      console.log("Sheet '" + sheetName + "' not found");
+      return { success: false, error: "Sheet '" + sheetName + "' not found" };
     }
     
-    // Build the result
+    const taskData = sheet.getRange(rowNumber, 1, 1, 10).getValues()[0];
+    
+    if (!taskData || taskData[0] === '') {
+      console.log('No task found at row ' + rowNumber);
+      return { success: false, error: "No task found at row " + rowNumber };
+    }
+    
     const result = {
       success: true,
-      data: projects
+      data: {
+        task_name: String(taskData[0]).trim() || 'N/A',
+        priority: String(taskData[1]).trim() || 'N/A',
+        assigned: String(taskData[2]).trim() || 'N/A',
+        date: {
+          start_date: String(taskData[3]).trim() || 'N/A',
+          end_date: String(taskData[4]).trim() || 'N/A'
+        },
+        description: String(taskData[5]).trim() || 'N/A',
+        status: String(taskData[6]).trim() || 'N/A',
+        progress: parseInt(taskData[7]) || 0,
+        notes: String(taskData[8]).trim() || 'N/A'
+      }
     };
-    
-    console.log('Project list completed:');
     console.log(JSON.stringify(result, null, 2));
     return result;
     
   } catch (error) {
-    const errorResult = {
-      success: false,
-      error: error.message
-    };
-    console.log('Error occurred:');
-    console.log(JSON.stringify(errorResult, null, 2));
-    return errorResult;
+    console.log('Error: ' + error.message);
+    return { success: false, error: error.message };
   }
 }
