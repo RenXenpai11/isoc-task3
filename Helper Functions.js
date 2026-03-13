@@ -55,13 +55,13 @@ function getCellValue(sheetName, cellRange) {
 
 // Test function to get project summary
 function getProjects() {
-  const result = getProjectSummary();
+  const result = getProjectSummary(); //calls the getProjectSummary function to retrieve project summary data
   Logger.log('Project Summary:');
   Logger.log(JSON.stringify(result, null, 2));
   return result;
 }
 
-function doGet(e) {
+function doGet(e) { //handles GET requests to the web app and returns project summary data in JSON format
   try {
     const result = getProjectSummary();
     return ContentService.createTextOutput(JSON.stringify(result))
@@ -78,7 +78,7 @@ function doGet(e) {
 
 function initializeDatabase() {
   try {
-    setMainDatabase('1bB7JezupjhmQRj0MoMg0Agtpxu3yluhX13KJPISqMPU');
+    setMainDatabase('1bB7JezupjhmQRj0MoMg0Agtpxu3yluhX13KJPISqMPU'); //calling the setMainDatabase function to initialize the database with the specified spreadsheet ID
     Logger.log('✓ Database initialized successfully!');
     Logger.log('✓ Spreadsheet ID: 1bB7JezupjhmQRj0MoMg0Agtpxu3yluhX13KJPISqMPU');
   } catch (error) {

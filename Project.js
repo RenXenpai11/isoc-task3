@@ -1,6 +1,6 @@
 /**
  * Retrieves project summary statistics.
- * @returns {object} JSON object with project counts by status.
+ * @returns {object} // JSON object with project counts by status.
  */
 
 function getProjectSummary() {
